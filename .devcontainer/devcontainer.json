@@ -2,8 +2,9 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/postgres
 {
 	"name": "Python 3 & PostgreSQL",
-	"dockerComposeFile": "docker-compose.yml",
-	"service": "app",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
 	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 	"features": {
 		"ghcr.io/devcontainers/features/github-cli:1": {
@@ -16,14 +17,15 @@
 		}
 	},
 
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
-
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// This can be used to network with other containers or the host.
 	"forwardPorts": [3000, 3001, 3002],
 
-	"onCreateCommand": "(cp .env.example .env || echo \".env creation failed\"); (pipenv --python $(command -v python3) install || echo \"pipenv install failed\"); (bash database.sh || echo \"database.sh failed\");",
+	// Runs every time the container starts (creation + resume) — keeps postgres alive.
+	"postStartCommand": "sudo service postgresql start || true",
+
+	// Runs once on first creation: initialise DB, install deps, run migrations.
+	"onCreateCommand": "sudo service postgresql start && (sudo -u postgres psql -tc \"SELECT 1 FROM pg_roles WHERE rolname='tastebook_user';\" | grep -q 1 || sudo -u postgres psql -c \"CREATE USER tastebook_user WITH PASSWORD 'postgres';\") && (sudo -u postgres psql -tc \"SELECT 1 FROM pg_database WHERE datname='tastebook';\" | grep -q 1 || sudo -u postgres psql -c \"CREATE DATABASE tastebook OWNER tastebook_user;\") && (cp .env.example .env || echo '.env creation failed') && (pipenv --python $(command -v python3) install || echo 'pipenv install failed') && (bash database.sh || echo 'database.sh failed')",
+
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": "npm install",
 	"customizations": {
