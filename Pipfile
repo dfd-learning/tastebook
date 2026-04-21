@@ -33,7 +33,7 @@ flask-login = "*"
 faker = "*"
 
 [requires]
-python_version = "3.13.4"
+python_version = "3.13"
 
 
 
