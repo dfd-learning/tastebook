@@ -1,0 +1,211 @@
+.recipe-page-shell {
+  max-width: 1080px;
+}
+
+.recipe-toolbar,
+.recipe-hero,
+.recipe-media,
+.recipe-panel,
+.recipe-comments,
+.recipe-empty-state {
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 0.85rem;
+}
+
+.recipe-description {
+  max-width: 72ch;
+  color: var(--bs-secondary-color);
+  font-size: 0.98rem;
+  line-height: 1.5;
+}
+
+.recipe-like-btn {
+  white-space: nowrap;
+}
+
+.recipe-meta-chip {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 999px;
+  background: var(--bs-light-bg-subtle, #f8f9fa);
+  color: var(--bs-secondary-color);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 0.3rem 0.68rem;
+}
+
+.recipe-author {
+  border: 1px solid rgba(var(--bs-primary-rgb), 0.2);
+  border-radius: 0.75rem;
+  background: rgba(var(--bs-primary-rgb), 0.05);
+  padding: 0.45rem 0.7rem;
+}
+
+.recipe-author-avatar {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.recipe-main-image {
+  display: block;
+  height: 350px;
+  object-fit: cover;
+}
+
+.recipe-image-counter {
+  background: rgba(20, 20, 20, 0.75);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.recipe-thumbnails {
+  border-top: 1px solid var(--bs-border-color-translucent);
+}
+
+.recipe-thumbnail {
+  width: 56px;
+  height: 56px;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid transparent;
+  border-radius: 0.6rem;
+  opacity: 0.7;
+  transition: transform 0.2s ease, opacity 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.recipe-thumbnail .img-thumbnail {
+  border: 0;
+  border-radius: 0;
+}
+
+.recipe-thumbnail:hover {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+.recipe-thumbnail.active {
+  opacity: 1;
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 0.16rem rgba(var(--bs-primary-rgb), 0.2);
+}
+
+.recipe-primary-image {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  font-size: 0.58rem;
+  line-height: 1;
+  padding: 0.2rem 0.35rem;
+}
+
+.recipe-panel .card-header {
+  border-bottom: 1px solid var(--bs-border-color-translucent);
+  background: transparent;
+  padding: 0.78rem 1rem;
+}
+
+.recipe-panel .card-body {
+  padding: 0.9rem 1rem 1rem;
+}
+
+.recipe-list-item {
+  border: 1px solid var(--bs-border-color-translucent);
+  border-radius: 0.65rem;
+  background: var(--bs-body-bg);
+  padding: 0.6rem 0.72rem;
+  line-height: 1.35;
+}
+
+.recipe-ingredient-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.ingredient-index {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 999px;
+  border: 1px solid rgba(var(--bs-primary-rgb), 0.3);
+  color: var(--bs-primary);
+  font-size: 0.73rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.recipe-qty {
+  font-weight: 700;
+  color: var(--bs-primary);
+}
+
+.instruction-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
+.step-number {
+  width: 1.65rem;
+  height: 1.65rem;
+  border-radius: 0.45rem;
+  flex-shrink: 0;
+  background: rgba(var(--bs-primary-rgb), 0.14);
+  color: var(--bs-primary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.recipe-comments .mt-4 {
+  margin-top: 0 !important;
+}
+
+@media (max-width: 992px) {
+  .recipe-main-image {
+    height: 295px;
+  }
+}
+
+@media (max-width: 576px) {
+  .recipe-main-image {
+    height: 225px;
+  }
+
+  .recipe-meta-chip {
+    font-size: 0.76rem;
+  }
+}
+
+[data-bs-theme='dark'] .recipe-toolbar,
+[data-bs-theme='dark'] .recipe-hero,
+[data-bs-theme='dark'] .recipe-media,
+[data-bs-theme='dark'] .recipe-panel,
+[data-bs-theme='dark'] .recipe-comments,
+[data-bs-theme='dark'] .recipe-empty-state {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-bs-theme='dark'] .recipe-list-item {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+[data-bs-theme='dark'] .recipe-meta-chip {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+[data-bs-theme='dark'] .recipe-author {
+  background: rgba(var(--bs-primary-rgb), 0.14);
+}
