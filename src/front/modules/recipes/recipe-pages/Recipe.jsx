@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { Clock, Users, ChefHat, Calendar, ArrowLeft, Camera, User, ExternalLink, Share2, Edit, Bookmark, Lock } from 'lucide-react';
+import { Clock, Users, ChefHat, Calendar, ArrowLeft, Camera, User, Share2, Edit, Bookmark } from 'lucide-react';
 import CommentSection from '../recipe-comments-subcomponents/CommentSection';
 import { LikeButton } from '../recipe-subcomponents/LikeButton';
 import AddToCollectionModal from '../recipe-subcomponents/AddToCollectionModal';
 import PrivateRecipeNotice from '../recipe-subcomponents/PrivateRecipeNotice';
+import './Recipe.scss';
 
 export const Recipe = () => {
     const { id } = useParams();
@@ -194,13 +195,11 @@ export const Recipe = () => {
     const renderIngredient = (ingredient, index) => {
         const { quantity, unit, ingredient: name } = ingredient;
         return (
-            <li key={index} className="ingredient-item d-flex align-items-center border-bottom">
-                {/* <div className="me-3">
-          <span className="badge bg-primary rounded-pill">{index + 1}</span>
-        </div> */}
+            <li key={index} className="recipe-list-item recipe-ingredient-item">
+                <span className="ingredient-index">{index + 1}</span>
                 <div className="flex-grow-1">
                     {quantity && (
-                        <span className="fw-bold text-primary me-2">
+                        <span className="recipe-qty me-2">
                             {quantity} {unit && unit}
                         </span>
                     )}
@@ -212,12 +211,8 @@ export const Recipe = () => {
 
     const renderInstruction = (instruction, index) => {
         return (
-            <li key={index} className="instruction-step d-flex align-items-start border-bottom">
-                <div className="me-3">
-                    <div className="step-number">
-                        {index + 1}
-                    </div>
-                </div>
+            <li key={index} className="recipe-list-item instruction-step">
+                <div className="step-number">{index + 1}</div>
                 <div className="flex-grow-1">
                     <p className="mb-0">{instruction}</p>
                 </div>
@@ -298,305 +293,267 @@ export const Recipe = () => {
     };
 
     const displayImage = getDisplayImage();
+    const ingredientCount = recipe.ingredients?.length || 0;
+    const instructionCount = recipe.instructions?.length || 0;
 
     return (
-        <div className="container py-4">
-            {/* Header with back button */}
-            <div className="row mb-4">
-                <div className="col-md-6">
-                    <div className="d-flex gap-2">
-                        <Link to="/all-recipes" className="btn btn-outline-primary">
-                            <ArrowLeft size={16} className="me-2" />
-                            Back to All Recipes
-                        </Link>
-                        {isRecipeOwner() ? (
-                            <Link to={`/recipe/modify/${id}`} className="btn btn-warning">
-                                <Edit size={16} className="me-2" />
-                                Modify Recipe
+        <div className="recipe-page py-4 py-lg-5">
+            <div className="container recipe-page-shell">
+                <div className="recipe-toolbar card border-0 shadow-sm mb-3">
+                    <div className="card-body p-2 p-md-3 d-flex flex-column flex-md-row justify-content-between gap-2">
+                        <div className="d-flex flex-wrap gap-2">
+                            <Link to="/all-recipes" className="btn btn-outline-primary btn-sm">
+                                <ArrowLeft size={14} className="me-1" />
+                                Back to All Recipes
                             </Link>
-                        ) : (
-                            <Link to="/" className="btn btn-outline-secondary">
-                                Home
-                            </Link>
-                        )}
-                    </div>
-                </div>
-                <div className="col-md-6 d-flex justify-content-md-end mt-2 mt-md-0">
-                    <div className="d-flex gap-2">
-                        {/* Add to Collection Button (only for logged-in users) */}
-                        {token && (
-                            <button
-                                onClick={() => setShowCollectionModal(true)}
-                                className="btn btn-outline-primary"
-                                title="Add to collection"
-                            >
-                                <Bookmark size={16} className="me-2" />
-                                Add to Collection
-                            </button>
-                        )}
-
-                        <button
-                            onClick={handleShare}
-                            className="btn btn-outline-secondary"
-                            title="Share this recipe"
-                        >
-                            <Share2 size={16} className="me-2" />
-                            Share Recipe
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div className="row">
-
-                {/* Main Content */}
-                <div className="col-lg-8 mx-auto">
-
-                    {/* Recipe Title and Info */}
-                    <div className="mb-4">
-                        <div className="d-flex justify-content-between align-items-start mb-3">
-                            <h1 className="display-5 fw-bold mb-0">{recipe.title}</h1>
-                            <LikeButton
-                                recipeId={recipe.recipe_id}
-                                initialLikeCount={recipe.like_count || 0}
-                                initialIsLiked={recipe.is_liked_by_user || false}
-                                size="large"
-                            />
+                            {isRecipeOwner() ? (
+                                <Link to={`/recipe/modify/${id}`} className="btn btn-warning btn-sm">
+                                    <Edit size={14} className="me-1" />
+                                    Modify Recipe
+                                </Link>
+                            ) : (
+                                <Link to="/" className="btn btn-outline-secondary btn-sm">
+                                    Home
+                                </Link>
+                            )}
                         </div>
 
-                        {/* Recipe Meta Information */}
-                        <div className="d-flex flex-wrap gap-3 mb-3">
-                            {recipe.created_at && (
-                                <div className="d-flex align-items-center text-muted">
-                                    <Calendar size={16} className="me-1" />
-                                    <small>Created {formatDate(recipe.created_at)}</small>
-                                </div>
+                        <div className="d-flex flex-wrap gap-2 justify-content-md-end">
+                            {token && (
+                                <button
+                                    onClick={() => setShowCollectionModal(true)}
+                                    className="btn btn-outline-primary btn-sm"
+                                    title="Add to collection"
+                                >
+                                    <Bookmark size={14} className="me-1" />
+                                    Add to Collection
+                                </button>
                             )}
 
-                            <div className="d-flex align-items-center text-muted">
-                                <ChefHat size={16} className="me-1" />
-                                <small>{recipe.ingredients ? recipe.ingredients.length : 0} ingredients</small>
+                            <button
+                                onClick={handleShare}
+                                className="btn btn-outline-secondary btn-sm"
+                                title="Share this recipe"
+                            >
+                                <Share2 size={14} className="me-1" />
+                                Share
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <section className="recipe-hero card border-0 shadow-sm mb-4">
+                    <div className="card-body p-3 p-lg-4">
+                        <div className="d-flex flex-column flex-lg-row justify-content-between align-items-start gap-3 mb-3">
+                            <div className="flex-grow-1">
+                                <p className="small text-uppercase text-muted fw-semibold mb-1">Recipe</p>
+                                <h1 className="h2 fw-bold mb-2">{recipe.title}</h1>
+                                {recipe.description ? (
+                                    <p className="recipe-description mb-0">{recipe.description}</p>
+                                ) : (
+                                    <p className="recipe-description text-muted fst-italic mb-0">No description provided for this recipe.</p>
+                                )}
                             </div>
 
-                            <div className="d-flex align-items-center text-muted">
-                                <Clock size={16} className="me-1" />
-                                <small>{recipe.instructions ? recipe.instructions.length : 0} steps</small>
+                            <div className="recipe-like-wrapper">
+                                <LikeButton
+                                    recipeId={recipe.recipe_id}
+                                    initialLikeCount={recipe.like_count || 0}
+                                    initialIsLiked={recipe.is_liked_by_user || false}
+                                    size="medium"
+                                    className="recipe-like-btn"
+                                />
                             </div>
                         </div>
 
-                        {/* Author Information */}
-                        {recipe.author && (
-                            <div className="author-card card border-0 p-3 mb-4">
-                                <div className="d-flex align-items-center">
-                                    <div className="me-3">
-                                        {recipe.author.cloudinary_url ? (
-                                            <img
-                                                src={recipe.author.cloudinary_url}
-                                                alt={recipe.author.full_name}
-                                                className="rounded-circle"
-                                                style={{ width: '50px', height: '50px', objectFit: 'cover' }}
-                                            />
-                                        ) : (
-                                            <div
-                                                className="rounded-circle bg-primary d-flex align-items-center justify-content-center text-white"
-                                                style={{ width: '50px', height: '50px' }}
-                                            >
-                                                <User size={24} />
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div>
-                                        <h6 className="mb-0">{recipe.author.full_name}</h6>
-                                        <small className="text-muted">@{recipe.author.username}</small>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
+                        <div className="d-flex flex-wrap gap-2 mb-3">
+                            {recipe.created_at && (
+                                <span className="recipe-meta-chip">
+                                    <Calendar size={14} className="me-1" />
+                                    Created {formatDate(recipe.created_at)}
+                                </span>
+                            )}
+                            <span className="recipe-meta-chip">
+                                <Users size={14} className="me-1" />
+                                {ingredientCount} ingredients
+                            </span>
+                            <span className="recipe-meta-chip">
+                                <Clock size={14} className="me-1" />
+                                {instructionCount} steps
+                            </span>
+                        </div>
 
-                        {/* Description */}
-                        {recipe.description ? (
-                            <div className="mb-4">
-                                <p className="lead">{recipe.description}</p>
-                            </div>
-                        ) : (
-                            <div className="mb-4">
-                                <p className="text-muted fst-italic">No description provided for this recipe.</p>
+                        {recipe.author && (
+                            <div className="recipe-author d-inline-flex align-items-center">
+                                {recipe.author.cloudinary_url ? (
+                                    <img
+                                        src={recipe.author.cloudinary_url}
+                                        alt={recipe.author.full_name}
+                                        className="recipe-author-avatar rounded-circle"
+                                    />
+                                ) : (
+                                    <div className="recipe-author-avatar rounded-circle bg-primary d-flex align-items-center justify-content-center text-white">
+                                        <User size={18} />
+                                    </div>
+                                )}
+                                <div className="ms-2">
+                                    <p className="mb-0 fw-semibold">{recipe.author.full_name}</p>
+                                    <small className="text-muted">@{recipe.author.username}</small>
+                                </div>
                             </div>
                         )}
                     </div>
+                </section>
 
-                    {/* Recipe Images */}
-                    {recipe.images && recipe.images.length > 0 ? (
-                        <div className="mb-4">
-                            <div className="recipe-image-container card">
-                                <div className="card-body p-0">
-                                    {/* Main Image */}
-                                    <div className="position-relative">
-                                        {displayImage && displayImage.url ? (
-                                            <img
-                                                src={displayImage.url}
-                                                alt={recipe.title}
-                                                className="img-fluid w-100"
-                                                style={{ height: '400px', objectFit: 'cover' }}
-                                                onError={(e) => {
-                                                    console.error('Main image failed to load:', e.target.src);
-                                                    // Replace with placeholder
-                                                    e.target.style.display = 'none';
-                                                    e.target.nextElementSibling.style.display = 'flex';
-                                                }}
-                                            />
-                                        ) : null}
-                                        {/* Error fallback for main image */}
-                                        <div className="d-none align-items-center justify-content-center" style={{ height: '400px' }}>
-                                            <div className="text-center">
-                                                <Camera size={48} className="text-muted mb-2" />
-                                                <p className="text-muted">Image failed to load</p>
-                                            </div>
-                                        </div>
-                                        {(!displayImage || !displayImage.url) && (
-                                            <div className="d-flex align-items-center justify-content-center" style={{ height: '400px' }}>
-                                                <div className="text-center">
-                                                    <Camera size={48} className="text-muted mb-2" />
-                                                    <p className="text-muted">Image not available</p>
-                                                </div>
-                                            </div>
-                                        )}
-                                        {recipe.images.length > 1 && (
-                                            <div className="position-absolute bottom-0 end-0 m-3">
-                                                <div className="bg-dark bg-opacity-75 text-white px-2 py-1 rounded">
-                                                    <Camera size={16} className="me-1" />
-                                                    {selectedImageIndex + 1} / {recipe.images.length}
-                                                </div>
-                                            </div>
-                                        )}
+                {recipe.images && recipe.images.length > 0 ? (
+                    <section className="recipe-media card border-0 shadow-sm mb-4 overflow-hidden">
+                        <div className="card-body p-0">
+                            <div className="position-relative">
+                                {displayImage && displayImage.url ? (
+                                    <img
+                                        src={displayImage.url}
+                                        alt={recipe.title}
+                                        className="img-fluid w-100 recipe-main-image"
+                                        onError={(e) => {
+                                            console.error('Main image failed to load:', e.target.src);
+                                            e.target.style.display = 'none';
+                                            e.target.nextElementSibling.style.display = 'flex';
+                                        }}
+                                    />
+                                ) : null}
+
+                                <div className="d-none align-items-center justify-content-center recipe-main-image">
+                                    <div className="text-center">
+                                        <Camera size={40} className="text-muted mb-2" />
+                                        <p className="text-muted mb-0">Image failed to load</p>
                                     </div>
+                                </div>
 
-                                    {/* Image Thumbnails */}
-                                    {recipe.images.length > 1 && (
-                                        <div className="p-3">
-                                            <div className="row g-2">
-                                                {recipe.images.map((image, index) => (
-                                                    <div key={image.id} className="col-auto">
-                                                        <button
-                                                            className={`recipe-thumbnail btn p-0 border-0 ${index === selectedImageIndex ? 'active opacity-100' : 'opacity-75'}`}
-                                                            onClick={() => setSelectedImageIndex(index)}
-                                                            style={{ width: '60px', height: '60px' }}
-                                                        >
-                                                            <img
-                                                                src={image.url}
-                                                                alt={`${recipe.title} - image ${index + 1}`}
-                                                                className="img-thumbnail w-100 h-100"
-                                                                style={{ objectFit: 'cover' }}
-                                                                onError={(e) => {
-                                                                    console.error('Thumbnail failed to load:', e.target.src);
-                                                                    e.target.style.opacity = '0.5';
-                                                                    e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2RkZCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LXNpemU9IjEwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+Tm8gSW1nPC90ZXh0Pjwvc3ZnPg==';
-                                                                }}
-                                                            />
-                                                            {image.is_primary && (
-                                                                <span
-                                                                    className="position-absolute top-0 start-0 badge bg-warning"
-                                                                    style={{ fontSize: '0.6rem' }}
-                                                                >
-                                                                    ★
-                                                                </span>
-                                                            )}
-                                                        </button>
-                                                    </div>
-                                                ))}
-                                            </div>
+                                {(!displayImage || !displayImage.url) && (
+                                    <div className="d-flex align-items-center justify-content-center recipe-main-image">
+                                        <div className="text-center">
+                                            <Camera size={40} className="text-muted mb-2" />
+                                            <p className="text-muted mb-0">Image not available</p>
                                         </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    ) : (
-                        /* Placeholder for recipes without images */
-                        <div className="mb-4">
-                            <div className="card text-center py-5">
-                                <div className="card-body">
-                                    <Camera size={48} className="text-muted mb-3" />
-                                    <h5 className="text-muted">No images available</h5>
-                                    <p className="text-muted mb-0">This recipe doesn't have any images yet.</p>
-                                </div>
-                            </div>
-                        </div>
-                    )}
+                                    </div>
+                                )}
 
-                    {/* Ingredients */}
-                    <div className="mb-4">
-                        <h3 className="h4 mb-3 d-flex align-items-center">
-                            <Users className="me-2 text-primary" size={24} />
-                            Ingredients
-                        </h3>
-                        <div className="card">
+                                {recipe.images.length > 1 && (
+                                    <span className="badge recipe-image-counter position-absolute bottom-0 end-0 m-3 px-2 py-1">
+                                        <Camera size={14} className="me-1" />
+                                        {selectedImageIndex + 1} / {recipe.images.length}
+                                    </span>
+                                )}
+                            </div>
+
+                            {recipe.images.length > 1 && (
+                                <div className="recipe-thumbnails p-3">
+                                    <div className="d-flex flex-wrap gap-2">
+                                        {recipe.images.map((image, index) => (
+                                            <button
+                                                key={image.id}
+                                                className={`recipe-thumbnail btn p-0 ${index === selectedImageIndex ? 'active' : ''}`}
+                                                onClick={() => setSelectedImageIndex(index)}
+                                                title={`Show image ${index + 1}`}
+                                            >
+                                                <img
+                                                    src={image.url}
+                                                    alt={`${recipe.title} - image ${index + 1}`}
+                                                    className="img-thumbnail w-100 h-100"
+                                                    style={{ objectFit: 'cover' }}
+                                                    onError={(e) => {
+                                                        console.error('Thumbnail failed to load:', e.target.src);
+                                                        e.target.style.opacity = '0.5';
+                                                        e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2RkZCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LXNpemU9IjEwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+Tm8gSW1nPC90ZXh0Pjwvc3ZnPg==';
+                                                    }}
+                                                />
+                                                {image.is_primary && <span className="recipe-primary-image">Primary</span>}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </section>
+                ) : (
+                    <section className="card border-0 shadow-sm recipe-empty-state mb-4">
+                        <div className="card-body text-center py-5">
+                            <Camera size={40} className="text-muted mb-2" />
+                            <h5 className="text-muted mb-1">No images available</h5>
+                            <p className="text-muted mb-0">This recipe does not have any images yet.</p>
+                        </div>
+                    </section>
+                )}
+
+                <div className="row g-3 mb-4">
+                    <div className="col-lg-5">
+                        <section className="recipe-panel card border-0 shadow-sm h-100">
+                            <div className="card-header d-flex justify-content-between align-items-center">
+                                <h2 className="h6 mb-0 d-flex align-items-center">
+                                    <Users className="me-2 text-primary" size={18} />
+                                    Ingredients
+                                </h2>
+                                <span className="badge rounded-pill text-bg-light border">{ingredientCount}</span>
+                            </div>
                             <div className="card-body">
-                                {recipe.ingredients && recipe.ingredients.length > 0 ? (
-                                    <ul className="list-unstyled mb-0">
-                                        {recipe.ingredients.map((ingredient, index) =>
-                                            renderIngredient(ingredient, index)
-                                        )}
+                                {ingredientCount > 0 ? (
+                                    <ul className="list-unstyled mb-0 d-grid gap-2">
+                                        {recipe.ingredients.map((ingredient, index) => renderIngredient(ingredient, index))}
                                     </ul>
                                 ) : (
                                     <div className="text-center py-4">
-                                        <Users size={48} className="text-muted mb-3" />
-                                        <h5 className="text-muted">No ingredients available</h5>
-                                        <p className="text-muted mb-0">No ingredients listed for this recipe.</p>
+                                        <Users size={36} className="text-muted mb-2" />
+                                        <h6 className="text-muted mb-1">No ingredients available</h6>
+                                        <p className="text-muted mb-0 small">No ingredients listed for this recipe.</p>
                                     </div>
                                 )}
                             </div>
-                        </div>
+                        </section>
                     </div>
 
-                    {/* Instructions */}
-                    <div className="mb-4">
-                        <h3 className="h4 mb-3 d-flex align-items-center">
-                            <ChefHat className="me-2 text-primary" size={24} />
-                            Instructions
-                        </h3>
-                        <div className="card">
+                    <div className="col-lg-7">
+                        <section className="recipe-panel card border-0 shadow-sm h-100">
+                            <div className="card-header d-flex justify-content-between align-items-center">
+                                <h2 className="h6 mb-0 d-flex align-items-center">
+                                    <ChefHat className="me-2 text-primary" size={18} />
+                                    Instructions
+                                </h2>
+                                <span className="badge rounded-pill text-bg-light border">{instructionCount}</span>
+                            </div>
                             <div className="card-body">
-                                {recipe.instructions && recipe.instructions.length > 0 ? (
-                                    <ol className="list-unstyled mb-0">
-                                        {recipe.instructions.map((instruction, index) =>
-                                            renderInstruction(instruction, index)
-                                        )}
+                                {instructionCount > 0 ? (
+                                    <ol className="list-unstyled mb-0 d-grid gap-2">
+                                        {recipe.instructions.map((instruction, index) => renderInstruction(instruction, index))}
                                     </ol>
                                 ) : (
                                     <div className="text-center py-4">
-                                        <ChefHat size={48} className="text-muted mb-3" />
-                                        <h5 className="text-muted">No instructions available</h5>
-                                        <p className="text-muted mb-0">This recipe doesn't have cooking instructions yet.</p>
+                                        <ChefHat size={36} className="text-muted mb-2" />
+                                        <h6 className="text-muted mb-1">No instructions available</h6>
+                                        <p className="text-muted mb-0 small">This recipe does not have cooking instructions yet.</p>
                                     </div>
                                 )}
                             </div>
-                        </div>
+                        </section>
                     </div>
                 </div>
 
-
-            </div>
-
-            {/* Comments Section */}
-            <div className="row mt-5">
-                <div className="col-12">
-                    <div className="border-top pt-4">
+                <section className="recipe-comments card border-0 shadow-sm">
+                    <div className="card-body p-3 p-lg-4">
                         <CommentSection
-                            recipeId={parseInt(id)}
+                            recipeId={parseInt(id, 10)}
                             currentUser={currentUser}
                             isRecipeOwner={isRecipeOwner()}
                         />
                     </div>
-                </div>
-            </div>
+                </section>
 
-            {/* Add to Collection Modal */}
-            <AddToCollectionModal
-                recipeId={parseInt(id)}
-                recipeName={recipe?.title || 'Recipe'}
-                show={showCollectionModal}
-                onClose={() => setShowCollectionModal(false)}
-            />
+                <AddToCollectionModal
+                    recipeId={parseInt(id, 10)}
+                    recipeName={recipe?.title || 'Recipe'}
+                    show={showCollectionModal}
+                    onClose={() => setShowCollectionModal(false)}
+                />
+            </div>
         </div>
     );
 };

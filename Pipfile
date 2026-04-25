@@ -11,6 +11,8 @@ verify_ssl = true
 
 [packages]
 flask = "*"
+flask-admin = "==1.6.1"
+flask-bootstrap = "==3.3.7.1"
 flask-sqlalchemy = "*"
 flask-migrate = "*"
 flask-swagger = "*"
@@ -19,7 +21,6 @@ python-dotenv = "*"
 flask-cors = "*"
 gunicorn = "*"
 cloudinary = "*"
-flask-admin = "*"
 typing-extensions = "*"
 flask-jwt-extended = "==4.6.0"
 wtforms = "==3.1.2"
@@ -33,7 +34,7 @@ flask-login = "*"
 faker = "*"
 
 [requires]
-python_version = "3.13.4"
+python_version = "3.13"
 
 
 

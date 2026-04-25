@@ -519,8 +519,8 @@ class AdminDataSeeder:
                 is_admin       = True,
                 plain_psswrd   = admin_password if current_app.config.get('ENV') != 'production' else None,
                 hashed_psswrd  = generate_password_hash(admin_password),
-                cloudinary_url    = "https://res.cloudinary.com/dqzbwmbap/image/upload/v1760594180/tastebook/users/1/spczs7xv19nqrkjhvez5.png",
-                cloudinary_img_id = "tastebook/users/1/spczs7xv19nqrkjhvez5"
+                cloudinary_url    = "https://res.cloudinary.com/dqzbwmbap/image/upload/v1760594180/tastebook/users/1/bmufyvoy8otqviqiz52m.png",
+                cloudinary_img_id = "tastebook/users/1/bmufyvoy8otqviqiz52m"
             )
 
             current_app.logger.info(f'Adding admin user to session: {admin_user.email}')

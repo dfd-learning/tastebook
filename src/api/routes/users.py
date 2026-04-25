@@ -161,8 +161,11 @@ def get_user_public_profile(username):
         offset = request.args.get('offset', 0, type=int)
         limit  = min(limit, 50)  # Max 50 recipes per request
         
-        # Get recipes ordered by creation date (newest first)
-        recipes_query = Recipe.query.filter_by(author_id=user.id).order_by(Recipe.created_at.desc())
+        # Public profile must only expose public recipes
+        recipes_query = Recipe.query.filter(
+            Recipe.author_id == user.id,
+            Recipe.is_public == True
+        ).order_by(Recipe.created_at.desc())
         
         total_recipes = recipes_query.count()
         recipes       = recipes_query.offset(offset).limit(limit).all()

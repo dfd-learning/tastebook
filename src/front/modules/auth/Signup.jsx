@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { CheckCircle2, Circle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -21,6 +21,12 @@ export const Signup = () => {
     const [usernameError, setUsernameError] = useState(null);
     const [usernameAvailable, setUsernameAvailable] = useState(null);
     const [checkingUsername, setCheckingUsername] = useState(false);
+    const [showSuccessToast, setShowSuccessToast] = useState(false);
+    const [redirectCountdown, setRedirectCountdown] = useState(0);
+
+    const redirectTimeoutRef = useRef(null);
+    const countdownIntervalRef = useRef(null);
+    const REDIRECT_DELAY_SECONDS = 10;
 
     // Password requirements
     const passwordRequirements = [
@@ -46,6 +52,30 @@ export const Signup = () => {
         }
     ];
     const isPasswordValid = passwordRequirements.every(r => r.test(password));
+
+    useEffect(() => {
+        return () => {
+            if (redirectTimeoutRef.current) clearTimeout(redirectTimeoutRef.current);
+            if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
+        };
+    }, []);
+
+    const startRedirectCountdown = () => {
+        setShowSuccessToast(true);
+        setRedirectCountdown(REDIRECT_DELAY_SECONDS);
+
+        if (redirectTimeoutRef.current) clearTimeout(redirectTimeoutRef.current);
+        if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
+
+        countdownIntervalRef.current = setInterval(() => {
+            setRedirectCountdown((prev) => (prev > 1 ? prev - 1 : 1));
+        }, 1000);
+
+        redirectTimeoutRef.current = setTimeout(() => {
+            if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
+            navigate("/login");
+        }, REDIRECT_DELAY_SECONDS * 1000);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -88,8 +118,7 @@ export const Signup = () => {
             const data = await res.json();
 
             if (res.ok) {
-                alert("Signup successful! You may now log in.");
-                navigate("/login");
+                startRedirectCountdown();
             } else {
                 setError(data.msg || "Sign up failed.");
             }
@@ -136,6 +165,19 @@ export const Signup = () => {
     return (
 
     <div className="container py-5">
+        {showSuccessToast && (
+            <div className="position-fixed top-0 start-50 translate-middle-x p-3" style={{ zIndex: 1080 }}>
+                <div className="toast show" role="status" aria-live="polite" aria-atomic="true">
+                    <div className="toast-header bg-success text-white">
+                        <strong className="me-auto">TasteBook</strong>
+                    </div>
+                    <div className="toast-body">
+                        Account created successfully. Redirecting to login in {redirectCountdown}s...
+                    </div>
+                </div>
+            </div>
+        )}
+
         <div className="row justify-content-center">
             <div className="col-12 col-md-8 col-lg-5">
 
